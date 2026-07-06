@@ -1,7 +1,12 @@
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 
-const { registerUser, loginUser } = require('../services/auth.service');
+const {
+  registerUser,
+  loginUser,
+  refreshAccessToken,
+  logoutUser,
+} = require('../services/auth.service');
 
 /**
  * Register
@@ -23,7 +28,27 @@ const login = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, 'Login Successful', result));
 });
 
-// Profile controller
+/**
+ * Refresh Token
+ */
+const refreshToken = asyncHandler(async (req, res) => {
+  const result = await refreshAccessToken(req.body.refreshToken);
+
+  res.status(200).json(new ApiResponse(200, 'Access Token Refreshed', result));
+});
+
+/**
+ * Logout
+ */
+const logout = asyncHandler(async (req, res) => {
+  const result = await logoutUser(req.user._id);
+
+  res.status(200).json(new ApiResponse(200, 'Logout Successful', result));
+});
+
+/**
+ * Profile
+ */
 const profile = asyncHandler(async (req, res) => {
   res
     .status(200)
@@ -34,4 +59,6 @@ module.exports = {
   register,
   login,
   profile,
+  refreshToken,
+  logout,
 };

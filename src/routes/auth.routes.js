@@ -1,7 +1,12 @@
 const express = require('express');
 
-const { register, login, profile } = require('../controllers/auth.controller');
-
+const {
+  register,
+  login,
+  profile,
+  refreshToken,
+  logout,
+} = require('../controllers/auth.controller');
 const {
   registerValidation,
   loginValidation,
@@ -93,6 +98,56 @@ router.post('/register', registerValidation, validate, register);
  *         description: Invalid Credentials
  */
 router.post('/login', loginValidation, validate, login);
+
+/**
+ * @openapi
+ * /api/auth/refresh:
+ *   post:
+ *     summary: Generate a new access token using a refresh token
+ *     tags:
+ *       - Authentication
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *
+ *     responses:
+ *       200:
+ *         description: Access token generated successfully
+ *
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post('/refresh', refreshToken);
+
+/**
+ * @openapi
+ * /api/auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags:
+ *       - Authentication
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *
+ *       401:
+ *         description: Unauthorized
+ */
+router.post('/logout', authenticate, logout);
 
 /**
  * @openapi
